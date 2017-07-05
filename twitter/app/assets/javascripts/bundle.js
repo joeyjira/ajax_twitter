@@ -79,13 +79,15 @@ $(() => {
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const APIUtil = __webpack_require__(2);
 
 class FollowToggle {
   constructor($el) {
     this.$el = $el;
-    this.userId = $el.attr("data-user-id");
-    this.followState = $el.attr("data-initial-follow-state");
+    this.userId = $el.data("user-id");
+    this.followState = $el.data("initial-follow-state");
     this.render = this.render.bind(this);
     this.render();
     this.handleClick();
@@ -103,32 +105,49 @@ class FollowToggle {
     this.$el.click(event => {
       event.preventDefault();
       if (this.followState === "false") {
-        $.ajax ({
-        url: `/users/${this.userId}/follow`,
-        type: "POST",
-        success: (followData) => {
+        APIUtil.followUser(this.userId).then(() => {
+
           this.followState = "true";
-          this.$el.attr("data-initial-follow-state", "true");
+          // this.$el.data("initial-follow-state", "true");
           this.render();
-        }
-      });
+        });
     } else {
-      $.ajax ({
-        url: `/users/${this.userId}/follow`,
-        type: "DELETE",
-        dataType: 'json',
-        success: (followData) => {
+        APIUtil.unfollowUser(this.userId).then(() => {
           this.followState = "false";
-          this.$el.attr("data-initial-follow-state", "false");
+          // this.$el.attr("data-initial-follow-state", "false");
           this.render();
-        }
-      });
-    }
+        });
+      }
     });
   }
 }
 
 module.exports = FollowToggle;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+const APIUtil = {
+  followUser: id => (
+    $.ajax ({
+      url: `/users/${id}/follow`,
+      type: "POST",
+      dataType: 'json'
+    })
+  ),
+
+  unfollowUser: id => {
+    return $.ajax ({
+      url: `/users/${id}/follow`,
+      type: "DELETE",
+      dataType: 'json'
+    });
+  }
+};
+
+module.exports = APIUtil;
 
 
 /***/ })

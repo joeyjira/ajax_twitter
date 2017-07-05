@@ -1,14 +1,18 @@
 const APIUtil = {
-  followUser: id => {
-
-  },
+  followUser: id => (
+    $.ajax ({
+      url: `/users/${id}/follow`,
+      type: "POST",
+      dataType: 'json'
+    })
+  ),
 
   unfollowUser: id => {
-    // return (followData) => {
-    //   this.followState = "false";
-    //   this.$el.attr("data-initial-follow-state", "false");
-    //   this.render();
-    // };
+    return $.ajax ({
+      url: `/users/${id}/follow`,
+      type: "DELETE",
+      dataType: 'json'
+    });
   }
 };
 
