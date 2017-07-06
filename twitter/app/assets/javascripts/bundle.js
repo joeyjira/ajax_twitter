@@ -153,6 +153,14 @@ const APIUtil = {
       type: "DELETE",
       dataType: 'json'
     });
+  },
+
+  searchUsers: (queryVal, success) => {
+    return $.ajax ({
+      url: `/users/search`,
+      type: "GET",
+      dataType: 'json'
+    });
   }
 };
 
@@ -161,7 +169,9 @@ module.exports = APIUtil;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+const APIUtil = __webpack_require__(2);
 
 class UsersSearch {
   constructor($user) {
@@ -171,7 +181,19 @@ class UsersSearch {
     this.$ul = $user.find("ul");
   }
 
-  
+  render() {
+    this.$ul.empty();
+    
+  }
+
+  handleInput(){
+    this.$user.on("input", event => {
+      event.preventDefault();
+      APIUtil.searchUsers(this.$input.val()).then(() => {
+
+      });
+    });
+  }
 }
 
 module.exports = UsersSearch;
