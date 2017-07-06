@@ -68,11 +68,18 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 const FollowToggle = __webpack_require__(1);
+const UserSearch = __webpack_require__(3);
+
 $(() => {
   let $el = $("button.follow-toggle");
+  let $users = $("nav.users-search");
+
   let buttArray = [];
   $el.each((idx, el) => {
     buttArray.push(new FollowToggle($(el)));
+  });
+  $users.each((idx, user) => {
+    new UserSearch($(user));
   });
 });
 
@@ -86,8 +93,8 @@ const APIUtil = __webpack_require__(2);
 class FollowToggle {
   constructor($el) {
     this.$el = $el;
-    this.userId = $el.data("user-id");
-    this.followState = $el.data("initial-follow-state");
+    this.userId = $el.attr("data-user-id");
+    this.followState = $el.attr("data-initial-follow-state");
     this.render = this.render.bind(this);
     this.render();
     this.handleClick();
@@ -104,18 +111,20 @@ class FollowToggle {
   handleClick() {
     this.$el.click(event => {
       event.preventDefault();
+      this.$el.prop("disabled", true);
       if (this.followState === "false") {
         APIUtil.followUser(this.userId).then(() => {
-
           this.followState = "true";
-          // this.$el.data("initial-follow-state", "true");
           this.render();
+        }).then(() => {
+          this.$el.prop("disabled", false);
         });
     } else {
         APIUtil.unfollowUser(this.userId).then(() => {
           this.followState = "false";
-          // this.$el.attr("data-initial-follow-state", "false");
           this.render();
+        }).then(() => {
+          this.$el.prop("disabled", false);
         });
       }
     });
@@ -148,6 +157,24 @@ const APIUtil = {
 };
 
 module.exports = APIUtil;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+class UsersSearch {
+  constructor($user) {
+    this.$user = $user;
+    this.$input = $('.search-input');
+    // this.$input = $user.find("input");
+    this.$ul = $user.find("ul");
+  }
+
+  
+}
+
+module.exports = UsersSearch;
 
 
 /***/ })
